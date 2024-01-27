@@ -1,0 +1,128 @@
+version: "24.0.6"
+
+services:
+  gtewayapi:
+    build:
+      context: C:\Users\dell\Desktop\GateWay-main
+    ports:
+      - "8087:8087"
+    restart: on-failure
+    environment:
+      - eureka.client.serviceUrl.defaultZone=http://eureka:8761/eureka/
+    depends_on:
+      - eureka
+
+  eureka:
+    build: C:\Users\dell\Desktop\eureka
+    ports:
+      - "8761:8761"
+
+  employenode:
+    build: C:\Users\dell\Desktop\employenode
+    ports:
+      - "4000:4000"
+    environment:
+      - MONGODB_URL=mongodb://mongodb:27017/employe # Update this line
+      - EUREKA_DEFAULTZONE=eureka
+      - EUREKA_PORT=8761
+      - HOSTNAME=employenode
+      - PORT=4000
+    depends_on:
+      - eureka
+      - mongodb
+
+  mongodb:
+    image: "mongo:latest"
+    ports:
+      - "27018:27017"
+    volumes:
+      - mongodb_data:/data/db
+
+  Produit:
+    container_name: Produit
+    build: C:\Users\dell\Desktop\Centre_Commercial\Produit
+    ports:
+      - "8104:8104"
+    image: "produit"
+    hostname: Produit
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:mysql://db_mysql:3306/Produit
+      - SPRING_DATASOURCE_USERNAME=root
+      - SPRING_DATASOURCE_PASSWORD=
+      - SPRING_JPA_HIBERNATE_DDL_AUTO=update
+      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://eureka:8761/eureka/
+    depends_on:
+      - eureka
+      - docker-mysql_1
+
+  docker-mysql_1:
+    image: "mysql:5.6"
+    container_name: db_mysql
+    environment:
+      - MYSQL_ROOT_PASSWORD=
+      - MYSQL_DATABASE=Produit
+      - MYSQL_PASSWORD=
+      - MYSQL_ALLOW_EMPTY_PASSWORD=true
+    ports:
+      - "3308:3306"
+
+  Centre:
+    container_name: Centre
+    build: C:\Users\dell\Desktop\Centre_Commercial\CentreCommercial
+    ports:
+      - "8102:8102"
+    image: "centre"
+    hostname: Centre
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:mysql://db2_mysql:3306/Centree
+      - SPRING_DATASOURCE_USERNAME=root
+      - SPRING_DATASOURCE_PASSWORD=
+      - SPRING_JPA_HIBERNATE_DDL_AUTO=update
+      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://eureka:8761/eureka/
+    depends_on:
+      - eureka
+      - docker-mysql_2
+
+  docker-mysql_2:
+    image: "mysql:5.6"
+    container_name: db2_mysql
+    environment:
+      - MYSQL_ROOT_PASSWORD=
+      - MYSQL_DATABASE=Centree
+      - MYSQL_PASSWORD=
+      - MYSQL_ALLOW_EMPTY_PASSWORD=true
+    ports:
+      - "3310:3306"
+
+  Boutique:
+    container_name: Boutique
+    build: C:\Users\dell\Desktop\Centre_Commercial\Boutique
+    ports:
+      - "8101:8101"
+    image: "boutique"
+    hostname: Boutique
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:mysql://db3_mysql:3306/Boutiquee
+      - SPRING_DATASOURCE_USERNAME=root
+      - SPRING_DATASOURCE_PASSWORD=
+      - SPRING_JPA_HIBERNATE_DDL_AUTO=update
+      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://eureka:8761/eureka/
+    depends_on:
+      - eureka
+      - docker-mysql_3
+
+  docker-mysql_3:
+    image: "mysql:5.6"
+    container_name: db3_mysql
+    environment:
+      - MYSQL_ROOT_PASSWORD=
+      - MYSQL_PASSWORD=
+      - MYSQL_DATABASE=Boutiquee
+      - MYSQL_ALLOW_EMPTY_PASSWORD=true
+    ports:
+      - "3307:3306"
+
+volumes:
+  mongodb_data:
+    driver: local
+
