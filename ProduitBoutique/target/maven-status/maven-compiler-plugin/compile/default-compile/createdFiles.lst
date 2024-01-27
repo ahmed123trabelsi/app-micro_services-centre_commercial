@@ -1,0 +1,7 @@
+com\example\produit\Entity\Produit$ProduitBuilder.class
+com\example\produit\ProduitApplication.class
+com\example\produit\Service\IServiceProduit.class
+com\example\produit\Repository\IProduitRepository.class
+com\example\produit\Service\ProduitSerivceImplements.class
+com\example\produit\Controller\ProduitController.class
+com\example\produit\Entity\Produit.class
